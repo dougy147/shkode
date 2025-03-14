@@ -1,0 +1,53 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+sub main {
+    my @args = @_;
+    my (@files, @opts);
+    parse_args(\@files,\@opts,@args);
+    foreach my $file (@files) {
+	serve($file, @opts); # should allow subprocesses here
+    };
+}
+
+sub serve {
+    my ($file) = shift;
+    my (@opts) = @_;
+    my $out = "./public/streamed.txt";
+
+    # run this in a thread
+    # and wait for a stop signal
+    print "[INFO] Serving \"$file\" to \"$out\".\n";
+    while (1) {
+	open(my $_in, "<", $file);
+	open(my $_out, ">", $out);
+	while (my $f = <$_in>) {
+	    print $_out $f;
+	}
+	close $_in;
+	close $_out;
+	sleep 1;
+    }
+}
+
+sub parse_args {
+    if (scalar @_ == 0 ) { usage(1, "Missing arguments") };
+    my ($files,$opts) = ($_[0],$_[1]);
+			 shift; shift;
+    my (@args) = @_;
+    foreach (@args) {
+	if (-e $_ ) { push @$files, $_; next }
+	else { push @$opts, $_ };
+    };
+}
+
+sub usage {
+    my ($_exit, $msg) = @_;
+    defined $_exit or $_exit = 0;
+    defined $msg and print "[ERROR] $msg.\n";
+    print "Usage: ./shkode <file> [opts]\n";
+    exit $_exit;
+}
+
+main @ARGV;
