@@ -27,6 +27,8 @@ sub serve {
     # run this in a thread
     # and wait for a stop signal
     use MIME::Base64; # code base64 encoding
+    use URI::Escape;
+    #use Encode qw(encode);
 
     my $host = 'shkode.nopub.club';
 
@@ -43,10 +45,11 @@ sub serve {
     print "[INFO] Serving \"$file\" to \"$pin\".\n";
     print "[INFO] Access live code here: https://$host/@/$pin/\n";
     while (1) {
-	open(my $_in, "<", $file);
+	open(my $_in, "<:encoding(UTF-8)", $file);
 	my $code = do { local $/; <$_in> };
 	close $_in;
-    	my $encoded = encode_base64($code,'');
+
+	my $encoded = uri_escape(encode_base64($code,''));
 	## To replace "curl" call...
 	#my $request = "GET /index.php?page=$pin&code=$encoded HTTP/1.0\r\n" .
 	#              "Host: $host\r\n" .

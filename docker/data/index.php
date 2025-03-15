@@ -5,7 +5,7 @@
     <!--<meta charset="UTF-8">-->
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>shkode</title>
-    <!--<link rel="icon" href="images/shkode.png" type="image/icon type">-->
+    <link rel="icon" href="" type="image/icon type">
 </head>
 
 <body>
@@ -24,6 +24,7 @@
 	    if (isset($_GET['page']) and isset($_GET['code'])) {
 		//ob_start();
 		$code = $_GET['code'];
+		//$code = str_replace(' ', '', $code);
 		$code = base64_decode($code);
 		//$code = mb_convert_encoding($code, 'UTF-8', 'auto');
 		$page = $_GET['page'];
