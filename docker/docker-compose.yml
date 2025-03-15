@@ -1,0 +1,32 @@
+# Helped by: https://blog.devsense.com/2019/php-nginx-docker
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    image: nginx:alpine
+    container_name: nginx-shkode
+    ports:
+      - "13337:80"
+    networks:
+      - internal
+    #network_mode : 'container:mullvad'
+    volumes:
+      - ./data/:/var/www/html/
+      - ./data/@/:/var/www/html/@/
+      - ./logs/:/var/log/nginx/
+    restart: unless-stopped
+  php:
+    image: php:fpm-alpine
+    container_name: php-shkode
+    networks:
+      - internal
+    volumes:
+      - ./data/:/var/www/html/
+      - ./data/@/:/var/www/html/@/
+      - ./logs/php.log:/var/log/fpm-php.www.log
+    user: "1000:1000"
+    restart: unless-stopped
+networks:
+  internal:
+    driver: bridge

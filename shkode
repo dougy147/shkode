@@ -2,6 +2,15 @@
 use strict;
 use warnings;
 
+# Usage:
+# ./shkode <file_to_stream>
+
+# The "./public" directory contains both
+# the content of the file to stream and
+# of the "index.html". Those files must
+# be sent to a server machine. For now,
+# this process is hard-coded... <|:^)
+
 sub main {
     my @args = @_;
     my (@files, @opts);
@@ -14,21 +23,49 @@ sub main {
 sub serve {
     my ($file) = shift;
     my (@opts) = @_;
-    my $out = "./public/streamed.txt";
 
     # run this in a thread
     # and wait for a stop signal
-    print "[INFO] Serving \"$file\" to \"$out\".\n";
+    use MIME::Base64; # code base64 encoding
+
+    my $host = 'shkode.nopub.club';
+
+    ## To replace "curl" call...
+    #use IO::Socket::INET; # get request
+    #my $port = 443;
+    #my $socket = IO::Socket::INET->new(
+    #    PeerAddr => $host,
+    #    PeerPort => $port,
+    #    Proto    => 'tcp'
+    #) or die "[ERROR] Cannot create socket: $!\n";
+
+    my $pin = generate_pin();
+    print "[INFO] Serving \"$file\" to \"$pin\".\n";
+    print "[INFO] Access live code here: https://$host/@/$pin/\n";
     while (1) {
 	open(my $_in, "<", $file);
-	open(my $_out, ">", $out);
-	while (my $f = <$_in>) {
-	    print $_out $f;
-	}
+	my $code = do { local $/; <$_in> };
 	close $_in;
-	close $_out;
-	sleep 1;
+    	my $encoded = encode_base64($code,'');
+	## To replace "curl" call...
+	#my $request = "GET /index.php?page=$pin&code=$encoded HTTP/1.0\r\n" .
+	#              "Host: $host\r\n" .
+	#	      "Connection: close\r\n\r\n";
+	#print $socket $request; # send request
+	system("curl -s \"https://$host\" -G -d \"page=$pin\" -d \"code=$encoded\" >/dev/null");
+	print "";
+	sleep 5;
     }
+    ## To replace "curl" call...
+    #close($socket);
+}
+
+sub generate_pin {
+    my $length = 15;
+    my @chars = ('A'..'Z', 'a'..'z', '0'..'9');
+    my $pin = '';
+    $pin .= $chars[rand @chars] for 1..$length;
+    return $pin;
 }
 
 sub parse_args {
@@ -37,7 +74,7 @@ sub parse_args {
 			 shift; shift;
     my (@args) = @_;
     foreach (@args) {
-	if (-e $_ ) { push @$files, $_; next }
+	if (-e $_ ) { push @$files, $_ }
 	else { push @$opts, $_ };
     };
 }
