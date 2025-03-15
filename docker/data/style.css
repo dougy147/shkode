@@ -6,6 +6,7 @@
 html {
     /*background: black;*/
     background: rgba(0,0,0,1);
+    font-size: 22px;
 }
 
 body {
@@ -15,4 +16,18 @@ body {
 
 iframe {
     background-color: rgba(0,0,0,1);
+}
+
+.demo {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(18,18,18,1);
+    /*width: 60%;*/
+    margin: 0 auto;
+    padding: 1%;
+    border: 5px solid grey;
+    border-radius: 6px;
 }

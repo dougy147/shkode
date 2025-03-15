@@ -12,6 +12,7 @@ use warnings;
 
 sub main {
     my @args = @_;
+    if (scalar @args == 0 ) { usage(1, "Missing arguments") };
     my (@files, @opts);
     parse_args(\@files,\@opts,@args);
     foreach my $file (@files) {
@@ -70,7 +71,6 @@ sub generate_pin {
 }
 
 sub parse_args {
-    if (scalar @_ == 0 ) { usage(1, "Missing arguments") };
     my ($files,$opts) = ($_[0],$_[1]);
 			 shift; shift;
     my (@args) = @_;
