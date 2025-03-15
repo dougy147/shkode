@@ -4,12 +4,11 @@ use warnings;
 
 # Usage:
 # ./shkode <file_to_stream>
-
-# The "./public" directory contains both
-# the content of the file to stream and
-# of the "index.html". Those files must
-# be sent to a server machine. For now,
-# this process is hard-coded... <|:^)
+#
+# The file to stream must be sent to a
+# publicly accessible server. For now, I
+# take the risk of providing my own <|:^)
+# and you take the risk of using it too.
 
 sub main {
     my @args = @_;
@@ -24,11 +23,10 @@ sub serve {
     my ($file) = shift;
     my (@opts) = @_;
 
-    # run this in a thread
+    # should run this in a thread
     # and wait for a stop signal
     use MIME::Base64; # code base64 encoding
-    use URI::Escape;
-    #use Encode qw(encode);
+    use URI::Escape;  # escape uri for curl
 
     my $host = 'shkode.nopub.club';
 

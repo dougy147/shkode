@@ -1,23 +1,25 @@
 <!DOCTYPE HTML>
-<meta charset="UTF-8">
-<html style="height: 100%;">
+<html lang="en" style="height: 100%;">
     <head>
+	<meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="../../style.css">
         <title>shkode</title>
         <link rel="icon" href="" type="image/icon type">
     </head>
     <body style="height:100%;margin:0;">
-	<iframe id="code" src="code.txt" style="width:100%;height:100%;border:none"></iframe>
+	<iframe id="code" src="code.html" style="width:100%;height:100%;border:none"></iframe>
 	<script>
+	    refresh_rate = 5000; /* in ms */
 	    setInterval(function() {
 		var iframe = document.getElementById('code');
 		var cur_height = iframe.contentWindow.scrollY;
 		var swap = iframe.src;
 		iframe.src = swap;
 		iframe.onload = function() {
+		    /* don't move when refreshing */
 		    iframe.contentWindow.scrollTo(0, cur_height);
 		};
-	    }, 1000);
+	    }, refresh_rate);
 	</script>
     </body>
 </html>

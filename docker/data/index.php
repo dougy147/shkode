@@ -2,49 +2,59 @@
 <html>
 
 <head>
-    <!--<meta charset="UTF-8">-->
+    <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>shkode</title>
     <link rel="icon" href="" type="image/icon type">
+    <!-- reduce flashbang for some browsers -->
+    <style>body { display: none; }</style>
+    <script>window.onload = function() { document.body.style.display = 'block'; };</script>
 </head>
 
 <body>
-    <!--
-    <noscript>
-      <style>html{display:none;}</style>
-      <meta http-equiv="refresh" content="0.0;url=./index.html">
-    </noscript>
-    -->
+    <center>
+	<h1>shkode</h1>
+
+	<div>
+	    <p>Serve your current coding buffer to a live-updated webpage.</p>
+	</div>
+    </center>
+
     <?php
-        //if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        //    $data = $_POST['data'];
-        //    echo 'Received data: ' . htmlspecialchars($data);
-	//};
-	if ($_SERVER["REQUEST_METHOD"] == "GET") {
-	    if (isset($_GET['page']) and isset($_GET['code'])) {
-		//ob_start();
-		$code = $_GET['code'];
-		//$code = str_replace(' ', '', $code);
-		$code = base64_decode($code);
-		//$code = mb_convert_encoding($code, 'UTF-8', 'auto');
-		$page = $_GET['page'];
-		if (! is_dir("./@/$page")) {
-		    mkdir("./@/$page",0755,true);
-		};
-		file_put_contents("./@/$page/code.txt", $code);
-		if (! file_exists("./@/$page/index.html")) {
-		    $template = file_get_contents('template.html');
-		    $template = html_entity_decode($template);
-		    //$template = str_replace("SRC", "./code.txt", $template);
-		    file_put_contents("./@/$page/index.html", $template);
-		};
-		//ob_end_flush();
-		////echo '<form action="post_handler.php" method="post">
-		////    <input type="hidden" name="data" value="some_value">
-		////    <input type="submit" value="Submit">
-		////    </form>';
-	    };
-	};
+	function stop($msg) { echo $msg; exit(); };
+	if (isset($_GET['page']) and isset($_GET['code'])) {
+    	    $code = trim(base64_decode($_GET['code']));
+	    $page = trim($_GET['page']);
+
+	    /* SECURITY CHECKS */
+	    if (empty($page)) {
+		stop("[OOPS] Empty page.");
+	    }
+	    /* no "." in "page" (directory traversal) */
+	    if (str_contains($page,".")) {
+		stop("[OOPS] Where you goin'? Dots are not allowed in page names.");
+	    }
+	    /* no "null byte" in "page" */
+	    if (strpos($page,"\0") !== false) {
+		stop("[OOPS] GET request went to /dev/null. Using null byte?");
+	    }
+	    /******/
+
+	    if (! is_dir("./@/$page")) { mkdir("./@/$page",0755,true); };
+	    /* keep original code in code.txt */
+    	    file_put_contents("./@/$page/code.txt", $code);
+	    /* add html/css to code in code.html */
+    	    $css  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../style.css\">";
+    	    $head = "<html><head>" . $css . "</head><body><pre><code>\n";
+	    $foot = "\n</code></pre></body></html>";
+    	    file_put_contents("./@/$page/code.html", $head . $code . $foot);
+    	    if (! file_exists("./@/$page/index.html")) {
+    	        $template = file_get_contents('template.html');
+    	        $template = html_entity_decode($template);
+    	        /*$template = str_replace("SRC", "./code.html", $template);*/
+    	        file_put_contents("./@/$page/index.html", $template);
+    	    };
+    	};
     ?>
 </body>
 </html>

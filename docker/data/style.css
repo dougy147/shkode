@@ -1,7 +1,18 @@
-/*syntax*/
+/* hide scrollbar webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    display: none;
+}
 
-.iframe {
+html {
     /*background: black;*/
-    /*color: yellow;*/
-    text-decoration: bold;
+    background: rgba(0,0,0,1);
+}
+
+body {
+    background: rgba(0,0,0,1);
+    color: yellow;
+}
+
+iframe {
+    background-color: rgba(0,0,0,1);
 }
