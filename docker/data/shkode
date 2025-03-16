@@ -30,36 +30,18 @@ sub serve {
     use URI::Escape;  # escape uri for curl
 
     my $host = 'shkode.nopub.club';
-
-    ## To replace "curl" call...
-    #use IO::Socket::INET; # get request
-    #my $port = 443;
-    #my $socket = IO::Socket::INET->new(
-    #    PeerAddr => $host,
-    #    PeerPort => $port,
-    #    Proto    => 'tcp'
-    #) or die "[ERROR] Cannot create socket: $!\n";
-
     my $pin = generate_pin();
-    print "[INFO] Serving \"$file\" here:\n";
-    print "[INFO] https://$host/@/$pin/\n";
+    print "[INFO] Serving \"$file\" to \"$pin\".\n";
+    print "[INFO] Access live code here: https://$host/@/$pin/\n";
     while (1) {
 	open(my $_in, "<:encoding(UTF-8)", $file);
 	my $code = do { local $/; <$_in> };
 	close $_in;
-
 	my $encoded = uri_escape(encode_base64($code,''));
-	## To replace "curl" call...
-	#my $request = "GET /index.php?page=$pin&code=$encoded HTTP/1.0\r\n" .
-	#              "Host: $host\r\n" .
-	#	      "Connection: close\r\n\r\n";
-	#print $socket $request; # send request
 	system("curl -s \"https://$host\" -G -d \"page=$pin\" -d \"code=$encoded\" >/dev/null");
 	print "";
 	sleep 5;
     }
-    ## To replace "curl" call...
-    #close($socket);
 }
 
 sub generate_pin {

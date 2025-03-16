@@ -13,49 +13,78 @@
 
 <body>
     <center>
-	<h1><span style="color:grey">#!/usr/bin/env perl</span> <span style="color:yellow">shkode</span></h1>
+	<h1><span style="color:grey">#!/usr/bin/env</span> <span style="color:yellow">shkode</span></h1>
 
 	<div>
 	    <p>Stream your code to a live-updated webpage.</p>
+
+	    <?php
+    	        function remove_unused($age) { /* age in minutes*/
+    	            $limit = time() - ($age * 60);
+    	            $dirs = array_filter(glob("./@/*"), 'is_dir');
+    	            foreach ($dirs as $dir) {
+    	        	if (filemtime($dir) < $limit) {
+    	        	    $files = array_diff(scandir($dir), ['.','..']);
+    	        	    foreach ($files as $file) { unlink("$dir/$file"); };
+    	        	    rmdir($dir);
+    	        	}
+    	            }
+    	        };
+    	        function count_users($max_users) {
+    	            $count = count(array_filter(glob("./@/*"), 'is_dir'));
+    	            return $count;
+    	        };
+    	        function stop($msg) { echo $msg; exit(); };
+
+    	        function check_queue() {
+    	            remove_unused(15);
+    	            $max_users = 10;
+    	            $nb_users = count_users($max_users);
+    	            $vacancy = $max_users - $nb_users;
+    	            $s = ($vacancy > 1) ? "s" : "";
+    	            echo "<div class=\"vacancy\">" .$vacancy . " spot$s left</div>";
+    	            if ($max_users - $nb_users <= 0) { exit(); };
+    	        };
+    	        check_queue();
+
+    	        /* if received something */
+    	        if (isset($_GET['page']) and isset($_GET['code'])) {
+    	            /* GRAB CODE */
+    	    	    $code = trim(base64_decode($_GET['code']));
+    	            $page = trim($_GET['page']);
+
+    	            /* SECURITY CHECKS */
+    	            if (empty($page)) {
+    	        	stop("[OOPS] Empty page.");
+    	            }
+    	            /* no "." in "page" (directory traversal) */
+    	            if (str_contains($page,".")) {
+    	        	stop("[OOPS] Where you goin'? Dots are not allowed in page names.");
+    	            }
+    	            /* no "null byte" in "page" */
+    	            if (strpos($page,"\0") !== false) {
+    	        	stop("[OOPS] GET request went to /dev/null. Using null byte?");
+    	            }
+    	            /******/
+
+    	            if (! is_dir("./@/$page")) { mkdir("./@/$page",0755,true); };
+    	            /* keep original code in code.txt */
+    	    	    file_put_contents("./@/$page/code.txt", $code);
+    	            /* add html/css to code in code.html */
+    	    	    $css  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../style.css\">";
+    	    	    $head = "<html><head>" . $css . "</head><body><pre><code>\n";
+    	            $foot = "\n</code></pre></body></html>";
+    	    	    file_put_contents("./@/$page/code.html", $head . $code . $foot);
+    	    	    if (! file_exists("./@/$page/index.html")) {
+    	    	        $template = file_get_contents('template.html');
+    	    	        $template = html_entity_decode($template);
+    	    	        /*$template = str_replace("SRC", "./code.html", $template);*/
+    	    	        file_put_contents("./@/$page/index.html", $template);
+    	    	    };
+    	        };
+    	    ?>
 	</div>
     </center>
-
-    <?php
-	function stop($msg) { echo $msg; exit(); };
-	if (isset($_GET['page']) and isset($_GET['code'])) {
-    	    $code = trim(base64_decode($_GET['code']));
-	    $page = trim($_GET['page']);
-
-	    /* SECURITY CHECKS */
-	    if (empty($page)) {
-		stop("[OOPS] Empty page.");
-	    }
-	    /* no "." in "page" (directory traversal) */
-	    if (str_contains($page,".")) {
-		stop("[OOPS] Where you goin'? Dots are not allowed in page names.");
-	    }
-	    /* no "null byte" in "page" */
-	    if (strpos($page,"\0") !== false) {
-		stop("[OOPS] GET request went to /dev/null. Using null byte?");
-	    }
-	    /******/
-
-	    if (! is_dir("./@/$page")) { mkdir("./@/$page",0755,true); };
-	    /* keep original code in code.txt */
-    	    file_put_contents("./@/$page/code.txt", $code);
-	    /* add html/css to code in code.html */
-    	    $css  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../style.css\">";
-    	    $head = "<html><head>" . $css . "</head><body><pre><code>\n";
-	    $foot = "\n</code></pre></body></html>";
-    	    file_put_contents("./@/$page/code.html", $head . $code . $foot);
-    	    if (! file_exists("./@/$page/index.html")) {
-    	        $template = file_get_contents('template.html');
-    	        $template = html_entity_decode($template);
-    	        /*$template = str_replace("SRC", "./code.html", $template);*/
-    	        file_put_contents("./@/$page/index.html", $template);
-    	    };
-	};
-    ?>
 
 <div class="demo">
 <pre><code><span style="color:grey">#!/usr/bin/env bash</span>
@@ -67,6 +96,15 @@
     <span style="color:red">sleep</span> <span style="color:magenta">5</span>
 <span style="color:red">done</span></pre></code>
 </div>
+
+<!--
+<div class="demo">
+<pre><code><span style="color:grey">#!/usr/bin/env perl</span>
+<span style="color:white">wget https://shkode.nopub.club/shkode</span>
+<span style="color:red">chmod</span> <span style="color:orange">+x</span> <span style="color:white">./shkode</span>
+<span style="color:white">./skode</span> <span style="color:white">/path/to/code.pl</span></pre></code>
+</div>
+-->
 
 </body>
 </html>

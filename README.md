@@ -1,19 +1,28 @@
-Stream your code to a live-updated webpage (also see [https://shkode.nopub.club](https://shkode.nopub.club)).
+| NOTE                              |
+|:----------------------------------|
+| **this is a personal experiment** |
 
-# Use with Perl script
+Stream your code to a [live-updated webpage](https://shkode.nopub.club).
 
-Download `shkode` Perl script, then:
+- Uploaded code is cleaned when >15 minutes old
+- Max size of uploaded code ~`23500`bytes
+- Limited to `10` simultaneous users
+
+# Use shkode
+
+## with dedicated script
 
 ```console
+$ wget https://shkode.nopub.club/shkode
 $ chmod +x ./shkode
 $ ./shkode /path/to/your/code.py
-[INFO] Serving "code.py" to "zWPeQt4wgj6S4oj".
-[INFO] Access live code here: https://shkode.nopub.club/@/zWPeQt4wgj6S4oj/
+[INFO] Serving "code.py" here:
+[INFO] https://shkode.nopub.club/@/zWPeQt4wgj6S4oj/
 ```
 
 Go to indicated URL to see your code live.
 
-# Use from Bash
+# with Bash
 
 ```bash
 file=/path/to/your/code.rs
@@ -25,9 +34,9 @@ while :; do
 done
 ```
 
-Go to `https://shkode.nopub.club/@/MY_OWN_PAGE` to see your code live.
+Go to `https://shkode.nopub.club/@/MY_OWN_PAGE/` to see your code live.
 
-# For nerds
+# for nerds
 
 Some details on how to deploy your own `shkode` server.
 
@@ -38,8 +47,8 @@ $ cd ./shkode
 $ docker compose up -d
 # streamer side
 $ ./shkode file.txt
-[INFO] Serving "file.txt" to "z747SLYJ2rDRyLe".
-[INFO] Access live code here: https://shkode.nopub.club/@/z747SLYJ2rDRyLe/
+[INFO] Serving "file.txt" here:
+[INFO] https://shkode.nopub.club/@/z747SLYJ2rDRyLe/
 ```
 
 Doc to come (or not...).
