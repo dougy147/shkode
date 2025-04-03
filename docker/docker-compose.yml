@@ -1,4 +1,3 @@
-# Helped by: https://blog.devsense.com/2019/php-nginx-docker
 services:
   nginx:
     build:
@@ -10,7 +9,6 @@ services:
       - "13337:80"
     networks:
       - internal
-    #network_mode : 'container:mullvad'
     volumes:
       - ./data/:/var/www/html/
       - ./data/@/:/var/www/html/@/

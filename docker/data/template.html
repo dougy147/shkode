@@ -16,7 +16,7 @@
 		var swap = iframe.src;
 		iframe.src = swap;
 		iframe.onload = function() {
-		    /* don't move when refreshing */
+		    /* stay at same spot when refreshing */
 		    iframe.contentWindow.scrollTo(0, cur_height);
 		};
 	    }, refresh_rate);

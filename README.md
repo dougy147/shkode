@@ -1,19 +1,25 @@
-| NOTE                              |
-|:----------------------------------|
-| **this is a personal experiment** |
+<!--Stream your code to a [live-refreshed webpage](https://shkode.nopub.club).-->
+<p align="center">
+<a href="https://shkode.nopub.club">
+<img src="https://raw.githubusercontent.com/dougy147/shkode/master/assets/header.png" width="80%" />
+</a>
+</p>
 
-Stream your code to a [live-updated webpage](https://shkode.nopub.club).
-
-- Uploaded code is cleaned when >15 minutes old
-- Max size of uploaded code ~`23500`bytes
-- Limited to `10` simultaneous users
+>[!NOTE]
+> This was a quick experiment, don't expect much.
 
 # Use shkode
 
-## with dedicated script
+>[!CAUTION]
+> Your files are going public.
+> Don't share any private information obviously.
+
+## Dedicated script
+
+Get [shkode](https://raw.githubusercontent.com/dougy147/shkode/refs/heads/master/docker/data/shkode) script from this repo, or from our example website [here](https://shkode.nopub.club/shkode).
 
 ```console
-$ wget https://shkode.nopub.club/shkode
+$ wget https://raw.githubusercontent.com/dougy147/shkode/refs/heads/master/docker/data/shkode
 $ chmod +x ./shkode
 $ ./shkode /path/to/your/code.py
 [INFO] Serving "code.py" here:
@@ -22,7 +28,9 @@ $ ./shkode /path/to/your/code.py
 
 Go to indicated URL to see your code live.
 
-# with Bash
+## Bash
+
+Let this script run:
 
 ```bash
 file=/path/to/your/code.rs
@@ -34,27 +42,33 @@ while :; do
 done
 ```
 
-Go to `https://shkode.nopub.club/@/MY_OWN_PAGE/` to see your code live.
+And go to `https://shkode.nopub.club/@/MY_OWN_PAGE/` to see your code live.
 
-# for nerds
+# Deploy your own instance
 
-Some details on how to deploy your own `shkode` server.
+To start your own `shkode` server, follow along those lines:
 
 ```console
 # server side
 $ git clone https://github.com/dougy147/shkode
 $ cd ./shkode
 $ docker compose up -d
-# streamer side
-$ ./shkode file.txt
-[INFO] Serving "file.txt" here:
-[INFO] https://shkode.nopub.club/@/z747SLYJ2rDRyLe/
 ```
 
-Doc to come (or not...).
+The `./data/` folder is exposed on port `13337`.
 
 # TODO
 
+- [ ] syntax highlighting (syntax.css)
 - [ ] handle special characters (avoid "Wide chars" failure)
-- [ ] add syntax highlighting (syntax.css)
-- [ ] auto-clean of unused files server side
+- [ ] select server's DNS
+
+# DONE
+
+- [x] auto-clean of unused files server side (~15min)
+- [x] max size of uploaded code ~`23500`bytes
+- [x] limited to `10` simultaneous users (change this in [source code](https://github.com/dougy147/shkode/blob/master/docker/data/shkode))
+
+
+>[!TIP]
+> No reward for discovering security issues without acknowledging them <|:^)

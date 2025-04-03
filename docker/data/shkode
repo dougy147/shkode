@@ -1,6 +1,8 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use MIME::Base64; # code base64 encoding
+use URI::Escape;  # escape uri for curl
 
 # Usage:
 # ./shkode <file_to_stream>
@@ -10,26 +12,22 @@ use warnings;
 # take the risk of providing my own <|:^)
 # and you take the risk of using it too.
 
+our $host = 'shkode.nopub.club';
+
 sub main {
     my @args = @_;
     if (scalar @args == 0 ) { usage(1, "Missing arguments") };
     my (@files, @opts);
-    parse_args(\@files,\@opts,@args);
+    parse_args(\@files,\@opts,@args); # might become useful later
     foreach my $file (@files) {
 	serve($file, @opts); # should allow subprocesses here
     };
 }
 
-sub serve {
+sub serve { # should run this in a thread and wait for a stop signal
     my ($file) = shift;
     my (@opts) = @_;
 
-    # should run this in a thread
-    # and wait for a stop signal
-    use MIME::Base64; # code base64 encoding
-    use URI::Escape;  # escape uri for curl
-
-    my $host = 'shkode.nopub.club';
     my $pin = generate_pin();
     print "[INFO] Serving \"$file\" to \"$pin\".\n";
     print "[INFO] Access live code here: https://$host/@/$pin/\n";
